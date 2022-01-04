@@ -13,7 +13,7 @@ class Player:
 
         Player.all.append(self)
     
-    def drawPlayer(self, screen):
+    def draw_player(self, screen):
         color = (0,0,0)
         pygame.draw.rect(screen, color, pygame.Rect(self.x, self.y, self.width, self.height))
 

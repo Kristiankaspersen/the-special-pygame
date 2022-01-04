@@ -15,21 +15,20 @@ height = 800
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
-#Surfaces
-Water_surface =  pygame.image.load("ocean.jpg")
+#Graphics
+water_surface =  pygame.image.load("ocean.jpg")
+island_surface = pygame.image.load("grass.jpg")
 
 # Useful variables
-islandX = 60
-islandY = 60
 middle_spawn = [width/2,height/2]
 
 # Spawn Player and Main Island
 player = Player("Geir", 4, 10, middle_spawn[0], middle_spawn[1], 10, 10)
-main_island = Island(islandX, islandY, width - islandX*2, height - islandY*2 )
+main_island = Island(60, 60, width - 60*2, height - 60*2 )
 
 # Spawn Baboons
-for x in range(50):
-    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 3, 100, 5, 5, 5)
+for x in range(500):
+    Baboon(random.randint(main_island.x, main_island.width+60-5), random.randint(main_island.y, main_island.height+60-5), 3, 100, 5, 5, 5)
 
 running = True
 while running:
@@ -52,10 +51,10 @@ while running:
             player.y += player.speed
 
 
-    #screen.fill((70,188,239))          #This is currently the water covering the entire screen
-    screen.blit(Water_surface,(0,0))    #Realistic water    
-    main_island.drawIsland(screen)      #Main Island
-    player.drawPlayer(screen)           #Player
+    screen.fill((70,188,239))                           #Simple water covering the entire screen
+    #screen.blit(water_surface,(0,0))                   #Testing realistic water    
+    main_island.draw_island(screen, island_surface)     #Main Island
+    player.draw_player(screen)                          #Player
 
     # Animal movement 
     for animal in Animal.all:

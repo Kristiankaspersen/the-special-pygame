@@ -20,6 +20,10 @@ class Island:
     def generateRocks(self, rocks):
         pass
 
-    def drawIsland(self, screen):
+    def draw_island(self, screen, island_surface):
         color = (0,135,102)
         pygame.draw.rect(screen, color, pygame.Rect(self.x, self.y, self.width, self.height))
+
+        #Testing realistic grass
+        # island_grass = pygame.transform.scale(island_surface, (self.width,self.height))
+        # screen.blit(island_grass,(self.x,self.y))  
