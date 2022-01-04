@@ -10,14 +10,14 @@ pygame.init()
 
 #Window and Game settings
 clock = pygame.time.Clock()
-width = 1000
-height = 800
+width = 1400
+height = 960
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
 # Useful variables
 middle_spawn = [width/2,height/2]
-island_offset = 60      #Distance from edge of screen to island
+island_offset = 100      #Distance from edge of screen to island
 player_type = 1         #This determines the player model
 animation_speed = 5     #This regulates animation speed      
 animation_counter = 0
