@@ -15,16 +15,16 @@ height = 800
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
-#Graphics
-water_surface =  pygame.image.load("ocean.jpg")
-island_surface = pygame.image.load("grass.jpg")
-
 # Useful variables
 middle_spawn = [width/2,height/2]
-island_offset = 60                  #Distance from edge of screen to island
+island_offset = 60      #Distance from edge of screen to island
+player_type = 1         #This determines the player model
+animation_speed = 5     #This regulates animation speed      
+animation_counter = 0
+animation_timer = 0
 
 # Spawn Player and Main Island
-player = Player("Geir", 5, 10, middle_spawn[0], middle_spawn[1], 10, 10)
+player = Player(player_type, "Geir", 5, 10, middle_spawn[0], middle_spawn[1])
 main_island = Island(island_offset, island_offset, width - island_offset*2, height - island_offset*2 )
 
 # Spawn Baboons
@@ -35,17 +35,25 @@ running = True
 while running:
     #FPS
     clock.tick(60)
+    
+    #Handle animation timing
+    animation_timer += 1
+    if animation_timer > animation_speed:
+        animation_counter += 1
+        if animation_counter > 2:
+            animation_counter = 0
+        animation_timer = 0
 
+    #Check for mouse or keyboard clicks
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     #Player Movement
-    player.move(main_island)
+    player.move(main_island, animation_counter)
 
-    screen.fill((70,188,239))                           #Simple water covering the entire screen
-    #screen.blit(water_surface,(0,0))                   #Testing realistic water    
-    main_island.draw_island(screen, island_surface)     #Main Island
+    screen.fill((70,188,239))                           #Simple water covering the entire screen  
+    main_island.draw_island(screen)                     #Main Island
     player.draw_player(screen)                          #Player
 
     # Animal movement 
