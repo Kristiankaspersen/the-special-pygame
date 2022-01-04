@@ -20,12 +20,12 @@ islandY = 60
 middle_spawn = [width/2,height/2]
 
 # Spawn Player and Main Island
-player = Player("Geir", 5, 10, middle_spawn[0], middle_spawn[1], 10, 10)
+player = Player("Geir", 4, 10, middle_spawn[0], middle_spawn[1], 10, 10)
 main_island = Island(islandX, islandY, width - islandX*2, height - islandY*2 )
 
 # Spawn Baboons
 for x in range(50):
-    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 4, 100, 5, 5, 5)
+    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 3, 100, 5, 5, 5)
 
 running = True
 while running:
