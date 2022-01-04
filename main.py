@@ -51,15 +51,14 @@ while running:
 
     #Player Movement
     player.move(main_island, animation_counter)
-
-    screen.fill((70,188,239))                           #Simple water covering the entire screen  
+    screen.fill((70,188,239))                           #Simple water covering the entire screen. Will be replaced by water graphics
     main_island.draw_island(screen)                     #Main Island
-    player.draw_player(screen)                          #Player
 
     # Animal movement 
     for animal in Animal.all:
         animal.animal_movement(main_island)
     for animal in Animal.all:
         animal.draw_animal(screen)
-       
+
+    player.draw_player(screen)                          #Player
     pygame.display.update()
