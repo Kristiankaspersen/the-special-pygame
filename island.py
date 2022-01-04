@@ -3,6 +3,7 @@ import pygame
 class Island:
     all = []
     def __init__(self, x, y, width, height):
+        self.offset = x
         self.x = x
         self.y = y
         self.width = width

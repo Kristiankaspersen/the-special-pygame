@@ -21,35 +21,27 @@ island_surface = pygame.image.load("grass.jpg")
 
 # Useful variables
 middle_spawn = [width/2,height/2]
+island_offset = 60                  #Distance from edge of screen to island
 
 # Spawn Player and Main Island
-player = Player("Geir", 4, 10, middle_spawn[0], middle_spawn[1], 10, 10)
-main_island = Island(60, 60, width - 60*2, height - 60*2 )
+player = Player("Geir", 5, 10, middle_spawn[0], middle_spawn[1], 10, 10)
+main_island = Island(island_offset, island_offset, width - island_offset*2, height - island_offset*2 )
 
 # Spawn Baboons
-for x in range(500):
-    Baboon(random.randint(main_island.x, main_island.width+60-5), random.randint(main_island.y, main_island.height+60-5), 3, 100, 5, 5, 5)
+for x in range(20):
+    Baboon(random.randint(main_island.x, main_island.width+island_offset-5), random.randint(main_island.y, main_island.height+island_offset-5), 3, 100, 5, 5, 5)
 
 running = True
 while running:
     #FPS
-    clock.tick(30)
+    clock.tick(60)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        #Player Movement
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a] and player.x > main_island.x:
-            player.x -= player.speed
-        if keys[pygame.K_w] and player.y > main_island.y:
-            player.y -= player.speed
-        if keys[pygame.K_d] and player.x + player.width < main_island.x + main_island.width:
-            player.x += player.speed
-        if keys[pygame.K_s] and player.y + player.height < main_island.y + main_island.height:
-            player.y += player.speed
-
+    #Player Movement
+    player.move(main_island)
 
     screen.fill((70,188,239))                           #Simple water covering the entire screen
     #screen.blit(water_surface,(0,0))                   #Testing realistic water    
@@ -62,5 +54,4 @@ while running:
     for animal in Animal.all:
         animal.draw_animal(screen)
        
-
     pygame.display.update()
