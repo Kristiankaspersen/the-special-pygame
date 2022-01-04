@@ -1,6 +1,6 @@
 import pygame
 import random
-from animal import Bamboo
+from animal import Baboon
 from animal import Animal
 from player import Player
 from island import Island 
@@ -13,7 +13,7 @@ clock = pygame.time.Clock()
 width = 1000
 height = 800
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("The Bamboo Island")
+pygame.display.set_caption("The Baboon Island")
 
 islandX = 60
 islandY = 60
@@ -24,8 +24,8 @@ playerY = height/2
 player = Player("Geir", 5, 10, playerX, playerY, 10, 10)
 main_island = Island(islandX, islandY, width - islandX*2, height - islandY*2 )
 
-for x in range(1):
-    Bamboo(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 4, 5, 5, 5)
+for x in range(50):
+    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 4, 5, 5, 5)
 
 running = True
 while running:

@@ -33,13 +33,13 @@ class Animal:
 
 
 
-class Bamboo(Animal): 
+class Baboon(Animal): 
     all = []
     def __init__(self, x, y, speed, health, width, height):
         super().__init__(x, y, speed, health, width, height)
     
         Animal.all.append(self)
-        Bamboo.all.append(self)
+        Baboon.all.append(self)
 
 class Hippo(Animal):
     def __init__(self, x, y, speed, health, width, height):
