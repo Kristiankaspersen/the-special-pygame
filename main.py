@@ -15,6 +15,10 @@ height = 800
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
+#Surfaces
+Water_surface =  pygame.image.load("ocean.jpg")
+
+# Useful variables
 islandX = 60
 islandY = 60
 middle_spawn = [width/2,height/2]
@@ -48,9 +52,10 @@ while running:
             player.y += player.speed
 
 
-    screen.fill((70,188,239))       #This is currently the water covering the entire screen
-    main_island.drawIsland(screen)  #Main Island
-    player.drawPlayer(screen)       #Player
+    #screen.fill((70,188,239))          #This is currently the water covering the entire screen
+    screen.blit(Water_surface,(0,0))    #Realistic water    
+    main_island.drawIsland(screen)      #Main Island
+    player.drawPlayer(screen)           #Player
 
     # Animal movement 
     for animal in Animal.all:
