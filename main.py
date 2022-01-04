@@ -5,11 +5,11 @@ from animal import Animal
 from player import Player
 from island import Island 
 
-
+#Initiate Pygame
 pygame.init()
-clock = pygame.time.Clock()
 
 #Window and Game settings
+clock = pygame.time.Clock()
 width = 1000
 height = 800
 screen = pygame.display.set_mode((width, height))
@@ -17,19 +17,21 @@ pygame.display.set_caption("The Baboon Island")
 
 islandX = 60
 islandY = 60
-playerX = width/2
-playerY = height/2
+middle_spawn = [width/2,height/2]
 
-# Spawn stuff
-player = Player("Geir", 5, 10, playerX, playerY, 10, 10)
+# Spawn Player and Main Island
+player = Player("Geir", 5, 10, middle_spawn[0], middle_spawn[1], 10, 10)
 main_island = Island(islandX, islandY, width - islandX*2, height - islandY*2 )
 
+# Spawn Baboons
 for x in range(50):
-    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 4, 5, 5, 5)
+    Baboon(random.randint(main_island.x, main_island.width), random.randint(main_island.y, main_island.height), 4, 100, 5, 5, 5)
 
 running = True
 while running:
+    #FPS
     clock.tick(30)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -46,9 +48,9 @@ while running:
             player.y += player.speed
 
 
-    screen.fill((70,188,239))
-    main_island.drawIsland(screen)
-    player.drawPlayer(screen)
+    screen.fill((70,188,239))       #This is currently the water covering the entire screen
+    main_island.drawIsland(screen)  #Main Island
+    player.drawPlayer(screen)       #Player
 
     # Animal movement 
     for animal in Animal.all:
