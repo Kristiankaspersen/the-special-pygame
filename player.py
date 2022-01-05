@@ -1,7 +1,6 @@
 import pygame
 import math
 import random
-from island import Island
 
 class Player: 
     all = []
@@ -13,6 +12,7 @@ class Player:
         self.speed = speed
         self.health = health
         self.surface = pygame.image.load(f"characters/Player{style}/F.png").convert_alpha()
+        self.player_rect = self.surface.get_rect(topleft = (self.x,self.y))
 
         Player.all.append(self)
     
@@ -23,7 +23,13 @@ class Player:
     def attack(self): 
         pass
 
-    def move(self, island, num):
+    def check_collision(self, landscape):
+        for x in landscape:
+            return self.player_rect.colliderect(x.rect)
+            #TEST pygame.sprite.collide_rect_ratio()
+
+
+    def move(self, island, landscape, num):
         self.width = self.surface.get_width()
         self.height = self.surface.get_height()
         keys = pygame.key.get_pressed()
@@ -34,8 +40,12 @@ class Player:
             self.surface = pygame.image.load(f"characters/Player{self.style}/{images[num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
                 self.x -= math.floor(self.speed/2 * 1.5)
+                if self.check_collision(landscape):
+                    self.x += math.floor(self.speed/2 * 1.5 + 1)
             else:
                 self.x -= math.floor(self.speed/2)
+                if self.check_collision(landscape):
+                    self.x += math.floor(self.speed/2 + 1)
             if self.x < island.x:
                 self.x = island.x
         
@@ -45,8 +55,12 @@ class Player:
             self.surface = pygame.image.load(f"characters/Player{self.style}/{images[num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
                 self.y -= math.floor(self.speed/2 * 1.5)
+                if self.check_collision(landscape):
+                    self.y += math.floor(self.speed/2 * 1.5 + 1)
             else:
                 self.y -= math.floor(self.speed/2)
+                if self.check_collision(landscape):
+                    self.y += math.floor(self.speed/2 + 1)
             if self.y < island.y:
                 self.y = island.y
 
@@ -56,10 +70,14 @@ class Player:
             self.surface = pygame.image.load(f"characters/Player{self.style}/{images[num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
                 self.x += math.floor(self.speed/2 * 1.5)
+                if self.check_collision(landscape):
+                    self.x -= math.floor(self.speed/2 * 1.5 + 1)
             else:
                 self.x += math.floor(self.speed/2)
-            if self.x + self.width > island.width + island.offset:
-                self.x = island.width + island.offset - self.width
+                if self.check_collision(landscape):
+                    self.x -= math.floor(self.speed/2 + 1)
+            if self.x + self.width > island.width:
+                self.x = island.width - self.width
         
         #Move down
         if keys[pygame.K_s]:
@@ -67,8 +85,12 @@ class Player:
             self.surface = pygame.image.load(f"characters/Player{self.style}/{images[num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
                 self.y += math.floor(self.speed/2 * 1.5)
+                if self.check_collision(landscape):
+                    self.y -= math.floor(self.speed/2 * 1.5 + 1)
             else:
                 self.y += math.floor(self.speed/2)
-            if self.y + self.height > island.height + island.offset:
-                self.y = island.height + island.offset - self.height   
+                if self.check_collision(landscape):
+                    self.y -= math.floor(self.speed/2 + 1)
+            if self.y + self.height > island.height:
+                self.y = island.height - self.height   
 

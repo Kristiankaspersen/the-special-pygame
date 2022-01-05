@@ -1,5 +1,6 @@
 import pygame 
 import random
+from island import Island
 
 class Animal: 
     all = []
@@ -59,10 +60,10 @@ class Animal:
                 self.x = island.x
             elif self.y < island.y:
                 self.y = island.y
-            elif self.x + self.width > island.width + island.offset:
-                self.x = island.width + island.offset - self.width
-            elif self.y + self.height > island.height + island.offset:
-                self.y = island.height + island.offset - self.height
+            elif self.x + self.width > island.width:
+                self.x = island.width - self.width
+            elif self.y + self.height > island.height:
+                self.y = island.height - self.height
         #Fish colliding with island
         else:
             if self.x < 0:
