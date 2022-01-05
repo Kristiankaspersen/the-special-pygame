@@ -1,8 +1,6 @@
 import pygame 
 import random
 
-
-
 class Animal: 
     all = []
     def __init__(self,x,y,speed,laziness,health,width,height):

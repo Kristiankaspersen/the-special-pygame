@@ -5,6 +5,16 @@ from animal import Animal
 from player import Player
 from island import Island 
 
+def animate():
+    global animation_timer,animation_speed,animation_counter
+    animation_timer += 1
+    if animation_timer > animation_speed:
+        animation_counter += 1
+        if animation_counter > 2:
+            animation_counter = 0
+        animation_timer = 0
+
+
 #Initiate Pygame
 pygame.init()
 
@@ -18,7 +28,7 @@ pygame.display.set_caption("The Baboon Island")
 # Useful variables
 middle_spawn = [width/2,height/2]
 island_offset = 100      #Distance from edge of screen to island
-player_type = 1         #This determines the player model
+player_type = 1
 animation_speed = 5     #This regulates animation speed      
 animation_counter = 0
 animation_timer = 0
@@ -35,14 +45,9 @@ running = True
 while running:
     #FPS
     clock.tick(60)
-    
-    #Handle animation timing
-    animation_timer += 1
-    if animation_timer > animation_speed:
-        animation_counter += 1
-        if animation_counter > 2:
-            animation_counter = 0
-        animation_timer = 0
+
+    #Animations
+    animate()
 
     #Check for mouse or keyboard clicks
     for event in pygame.event.get():
@@ -51,14 +56,15 @@ while running:
 
     #Player Movement
     player.move(main_island, animation_counter)
-    screen.fill((70,188,239))                           #Simple water covering the entire screen. Will be replaced by water graphics
+
+    screen.fill((70,188,239))                           #Simple water covering the entire screen  
     main_island.draw_island(screen)                     #Main Island
+    player.draw_player(screen)                          #Player
 
     # Animal movement 
     for animal in Animal.all:
         animal.animal_movement(main_island)
     for animal in Animal.all:
         animal.draw_animal(screen)
-
-    player.draw_player(screen)                          #Player
+       
     pygame.display.update()

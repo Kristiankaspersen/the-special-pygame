@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+from island import Island
 
 class Player: 
     all = []
@@ -16,8 +17,8 @@ class Player:
         Player.all.append(self)
     
     def draw_player(self, screen):
-        player_rect = self.surface.get_rect(topleft = (self.x,self.y))
-        screen.blit(self.surface,player_rect)
+        self.player_rect = self.surface.get_rect(topleft = (self.x,self.y))
+        screen.blit(self.surface,self.player_rect)
 
     def attack(self): 
         pass
