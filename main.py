@@ -1,6 +1,6 @@
 import pygame
 import random
-from animal import Baboon
+from animal import *
 from animal import Animal
 from player import Player
 from island import Island 
@@ -13,7 +13,6 @@ def animate():
         if animation_counter > 2:
             animation_counter = 0
         animation_timer = 0
-
 
 #Initiate Pygame
 pygame.init()
@@ -35,12 +34,18 @@ animation_timer = 0
 
 # Spawn Player and Main Island
 player = Player(player_type, "Geir", 5, 10, middle_spawn[0], middle_spawn[1])
-main_island = Island(island_offset, island_offset, width - island_offset*2, height - island_offset*2 )
+main_island = Island(screen, island_offset, island_offset, width - island_offset*2, height - island_offset*2 )
 
-# Spawn Baboons
-for x in range(20):
-    Baboon(random.randint(main_island.x, main_island.width+island_offset-5), random.randint(main_island.y, main_island.height+island_offset-5), 3, 100, 5, 5, 5)
+def spawn_animals():
+    # Spawn Baboons
+    # for x in range(2):
+    #     Baboon(random.randint(main_island.x, main_island.width+island_offset-5), random.randint(main_island.y, main_island.height+island_offset-5), 3, 100, 5, 5, 5)
 
+    # Spawn Lions
+    for x in range(5):
+        Lion(random.randint(main_island.x, main_island.width+island_offset-5), random.randint(main_island.y, main_island.height+island_offset-5), 3, 400, 20, 5, 5)
+
+spawn_animals()
 running = True
 while running:
     #FPS
@@ -57,14 +62,11 @@ while running:
     #Player Movement
     player.move(main_island, animation_counter)
 
-    screen.fill((70,188,239))                           #Simple water covering the entire screen  
     main_island.draw_island(screen)                     #Main Island
-    player.draw_player(screen)                          #Player
-
+    player.draw_player(screen)  
+    
     # Animal movement 
     for animal in Animal.all:
-        animal.animal_movement(main_island)
-    for animal in Animal.all:
-        animal.draw_animal(screen)
+        animal.animal_movement(main_island, screen, animation_counter)
        
     pygame.display.update()
