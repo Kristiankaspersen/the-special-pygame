@@ -31,7 +31,7 @@ animation_speed = 5     #This regulates animation speed
 animation_counter = 0
 animation_timer = 0
 grass_amount = 1000
-trees_amount = 50
+trees_amount = 100
 lion_amount = 20
 
 # Create Island Ground and water covering the ground
@@ -48,21 +48,28 @@ water_object3.add(Water3(screen, main_island))
 water_object4 = pygame.sprite.Group()
 water_object4.add(Water4(screen, main_island))
 
-# Create player
+#Sprite groups
 player = pygame.sprite.GroupSingle()
+landscape_objects = pygame.sprite.Group()
+grass_objects = pygame.sprite.Group()
+animals = pygame.sprite.Group()
+
+# Create player
 player.add(Player(player_type, "Geir", screen))
 
+# Water effects
+for x in range(100):
+    landscape_objects.add(Water_effect(screen, main_island, water_object1, water_object2, water_object3, water_object4))
+
 # Create landscape objects
-grass_objects = pygame.sprite.Group()
 for x in range(grass_amount):
     grass_objects.add(Grass(screen, main_island))  
 
-landscape_objects = pygame.sprite.Group()
+# Trees
 for x in range(trees_amount):
     landscape_objects.add(Tree(screen, main_island))  
 
 # Create animals
-animals = pygame.sprite.Group()
 for x in range(lion_amount):
     animals.add(Lion(screen, main_island, landscape_objects))         
 
@@ -95,5 +102,5 @@ while running:
 
     landscape_objects.update()
     landscape_objects.draw(screen)
-       
+
     pygame.display.update()

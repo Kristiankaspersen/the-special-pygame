@@ -118,7 +118,7 @@ class Lion(Animal):
         self.animal_type = "lion"
         self.speed = 3
         self.health = 20
-        self.laziness = 50  
+        self.laziness = 2  
         self.image = pygame.image.load(f"animals/{self.animal_type}/F.png").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (self.x,self.y))
         self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)

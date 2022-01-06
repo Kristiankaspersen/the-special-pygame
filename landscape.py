@@ -46,3 +46,21 @@ class Grass(Landscape):
 
         Landscape.all.append(self)
         Grass.all.append(self)
+
+class Water_effect(Landscape):
+    all = []
+    def __init__(self, screen, island, water_object1, water_object2, water_object3, water_object4):
+        super().__init__(screen, island)
+
+        list = [water_object1, water_object2, water_object3, water_object4]
+        ob = random.choice(list)
+        for x in ob:
+            water_object = x
+
+        self.x_midbot = random.randint(water_object.rect.left+6, water_object.rect.right-6)
+        self.y_midbot = random.randint(water_object.rect.top+8, water_object.rect.bottom)
+        self.image = pygame.image.load(f"landscape/water_effect1.png").convert_alpha()
+        self.rect = self.image.get_rect(midbottom = (self.x_midbot, self.y_midbot))
+
+        Landscape.all.append(self)
+        Water_effect.all.append(self)
