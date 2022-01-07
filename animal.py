@@ -1,44 +1,59 @@
 import pygame 
 import random
-from island import Island
 
 class Animal(pygame.sprite.Sprite): 
     all = []
-    def __init__(self, screen, island):
+    def __init__(self, screen):
         super().__init__()
         self.screen = screen
-        self.x = random.randint(island.x, island.width-10)
-        self.y = random.randint(island.y, island.height-10)
-        self.animal_type = "Animal"      
+        self.animal_type = "na" 
+        self.animal_name = "Animal"      
 
         Animal.all.append(self)
     
-    def update(self, island, landscape_objects, animate_num):
-        self.landscape_objects = landscape_objects
-        self.animal_movement(island, animate_num)
+    def update(self, island, solid_objects, water_object1, water_object2, water_object3, water_object4, animate_num):
+        self.water_objects = [water_object1, water_object2, water_object3, water_object4]
+        self.solid_objects = solid_objects
+        self.island = island
+        self.animal_movement(animate_num)
         self.isdead()
 
-    def spawn_collision(self, landscape_objects):
-        for x in landscape_objects:
+    def spawn_collision(self, solid_objects, water_object1, water_object2, water_object3, water_object4):
+        water_objects = [water_object1, water_object2, water_object3, water_object4]
+        for x in solid_objects:
             for y in self.all:
                 if x.rect.colliderect(y.rect):
                     y.kill()
+        if self.animal_type == "land":
+            for water_object in water_objects:
+                for water in water_object:
+                    if self.hitbox.colliderect(water.rect):
+                        self.kill()
 
-    def collision(self, landscape_objects):
-        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)
-        for x in landscape_objects:
+    def collision(self):
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, 22, 19)
+        for x in self.solid_objects:
             if self.hitbox.colliderect(x.rect):
+                return True
+        if self.animal_type == "land":
+            for water_object in self.water_objects:
+                for water in water_object:
+                    if self.hitbox.colliderect(water.rect):
+                        return True
+        elif self.animal_type == "water":
+            if self.hitbox.colliderect(self.island.rect) or self.rect.right > self.screen.get_width() or self.rect.left < 0 \
+                or self.rect.bottom > self.screen.get_height() or self.rect.top < 0:
                 return True
 
     def animate(self, images=[], animate_num=-1, move=False):
         if animate_num != -1 and images and move:
-            self.image = pygame.image.load(f"animals/{self.animal_type}/{images[animate_num]}").convert_alpha()
+            self.image = pygame.image.load(f"animals/{self.animal_name}/{images[animate_num]}").convert_alpha()
     
     def isdead(self):
         if self.health <= 0:
             self.kill()
 
-    def animal_movement(self, island, animate_num):
+    def animal_movement(self, animate_num):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         move_direction = random.randint(1,4)
@@ -46,80 +61,55 @@ class Animal(pygame.sprite.Sprite):
         if num_move < 3:
             if move_direction == 1:
                 self.rect.x -= self.speed
-                self.check_bounds(island)
-                if self.collision(self.landscape_objects):
+                if self.collision():
                     self.rect.x += self.speed
                 images = ["L.png", "LR.png", "LL.png"]
                 self.animate(images, animate_num, True)
             elif move_direction == 2:
                 self.rect.y -= self.speed
-                self.check_bounds(island)
-                if self.collision(self.landscape_objects):
+                if self.collision():
                     self.rect.y += self.speed
                 images = ["B.png", "BR.png", "BL.png"]
                 self.animate(images, animate_num, True)
             elif move_direction == 3:
                 self.rect.x += self.speed
-                self.check_bounds(island)
-                if self.collision(self.landscape_objects):
+                if self.collision():
                     self.rect.x -= self.speed
                 images = ["R.png", "RR.png", "RL.png"]
                 self.animate(images, animate_num, True)
             elif move_direction == 4:
                 self.rect.y += self.speed
-                self.check_bounds(island)
-                if self.collision(self.landscape_objects):
+                if self.collision():
                     self.rect.y -= self.speed
                 images = ["F.png", "FR.png", "FL.png"]
                 self.animate(images, animate_num, True)
         self.animate(animate_num)
 
-    #Make sure the animals stay within their bounds. Fix when island is re-structured
-    def check_bounds(self, island):
-        if not self.animal_type == "fish":
-            if self.rect.x < island.x:
-                self.rect.x = island.x
-            elif self.rect.y < island.y:
-                self.rect.y = island.y
-            elif self.rect.x + self.width > island.width:
-                self.rect.x = island.width - self.width
-            elif self.rect.y + self.height > island.height:
-                self.rect.y = island.height - self.height
-        #Fish colliding with island
-        else:
-            if self.rect.x < 0:
-                self.rect.x = 0
-            elif self.rect.x + self.width > self.screen.get_width():
-                self.rect.x = self.screen.get_width() - self.width
-            elif self.rect.y < 0:
-                self.rect.y = 0
-            elif self.rect.y + self.height > self.screen.get_height():
-                self.rect.y = self.screen.get_height() + self.height
+    def on_island(self, island):
+        x = random.randint(island.x, island.width-10)
+        y = random.randint(island.y, island.height-10) 
+        return x, y
 
-            #Left side
-            elif self.rect.x + self.width > island.offset and self.rect.x + self.width < island.offset + 10 and self.rect.y > island.offset and self.rect.y + self.height < self.screen.get_height() - island.offset:
-                self.rect.x = island.offset - self.width
-
-            #Right side
-            elif self.rect.x < island.width and self.rect.x > island.width - 10 and self.rect.y > island.offset and self.rect.y + self.height < self.screen.get_height() - island.offset:
-                self.rect.x = island.width
-
-            #Top side
-            elif self.rect.y + self.height > island.offset and self.rect.y + self.height < island.offset + 10 and self.rect.x > island.offset and self.rect.x + self.width < self.screen.get_width() - island.offset:
-                self.rect.y = island.offset + self.height
-
-            #Bottom side
-            elif self.rect.y < island.height and self.rect.y > island.height - 10 and self.rect.x > island.offset and self.rect.x + self.width < self.screen.get_width() - island.offset:
-                self.rect.y = island.height
+    def off_island(self):
+        for x in self.location:
+            water_object = x
+        
+        x = random.randint(water_object.rect.left+6, water_object.rect.right-10)
+        y = random.randint(water_object.rect.top+8, water_object.rect.bottom)
+        return x,y
 
 class Lion(Animal):
-    def __init__(self, screen, island, landscape_objects):
-        super().__init__(screen, island)
-        self.animal_type = "lion"
+    all = []
+    def __init__(self, screen, island):
+        super().__init__(screen)
+        self.animal_type = "land"
+        self.animal_name = "lion"
         self.speed = 3
         self.health = 20
-        self.laziness = 2  
-        self.image = pygame.image.load(f"animals/{self.animal_type}/F.png").convert_alpha()
+        self.laziness = 100  
+
+        self.x, self.y = self.on_island(island)
+        self.image = pygame.image.load(f"animals/{self.animal_name}/F.png").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (self.x,self.y))
         self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)
         self.width = self.rect.width
@@ -128,16 +118,12 @@ class Lion(Animal):
         Animal.all.append(self)
         Lion.all.append(self)
 
-        self.spawn_collision(landscape_objects)
-
-
-
 class Baboon(Animal): 
     all = []
     def __init__(self, x, y, speed, laziness, health, width, height):
         super().__init__(x, y, speed, laziness, health, width, height)
-    
-        self.animal_type = "baboon"
+        self.animal_type = "land"
+        self.animal_name = "baboon"
 
         Animal.all.append(self)
         Baboon.all.append(self)
@@ -145,15 +131,30 @@ class Baboon(Animal):
 class Hippo(Animal):
     def __init__(self, x, y, speed, laziness, health, width, height):
         super().__init__(x, y, speed, laziness, health, width, height)
-        
-        self.animal_type = "hippo"
+        self.animal_type = "landwater"
+        self.animal_name = "hippo"
         Animal.all.append(self)
         Hippo.all.append(self)
     
 class Fish(Animal):
-    def __init__(self, x, y, speed, laziness, health, width, height):
-        super().__init__(x, y, speed, laziness, health, width, height)
+    all = []
+    def __init__(self, screen, water_object1, water_object2, water_object3, water_object4):
+        super().__init__(screen)
+        self.animal_type = "water"
+        self.animal_name = "fish"
+        self.speed = 4
+        self.health = 2
+        self.laziness = 100
 
-        self.animal_type = "fish"
+        self.location = random.choice([water_object1, water_object2, water_object3, water_object4])
+        self.x, self.y = self.off_island()
+
+        self.image = pygame.image.load(f"animals/{self.animal_name}/F.png").convert_alpha()
+        self.rect = self.image.get_rect(midbottom = (self.x,self.y))
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)
+        self.width = self.rect.width
+        self.height = self.rect.height
+
         Animal.all.append(self)
         Fish.all.append(self)
+

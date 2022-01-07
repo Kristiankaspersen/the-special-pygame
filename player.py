@@ -10,30 +10,67 @@ class Player(pygame.sprite.Sprite):
         self.name = name
         self.x = screen.get_width()/2
         self.y = screen.get_height()/2
-        self.speed = 5
+        self.speed = 2
         self.health = 10
         self.image = pygame.image.load(f"characters/Player{style}/F.png").convert_alpha()
         self.rect = self.image.get_rect(topleft = (self.x,self.y))
-        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
+
+        self.last_action_time = -1
+        self.chop_sound = pygame.mixer.Sound("audio/chop1.wav")
 
         Player.all.append(self)
 
-    def player_collision(self, landscape_objects):
-        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, 5)
-        for x in landscape_objects:
+    def player_collision(self):
+        self.hitbox = pygame.Rect(self.rect.x, self.rect.y, 15, 19)
+        for x in self.solid_objects:
             if self.hitbox.colliderect(x.rect):
                 return True
+        for water_object in self.water_objects:
+            for x in water_object:
+                if self.hitbox.colliderect(x.rect):
+                    return True
 
-    def update(self, island, landscape_objects, num):
+    def update(self, island, solid_objects, soft_objects, water_object1, water_object2, water_object3, water_object4, num):
+        self.soft_objects = soft_objects
+        self.island = island
+        self.water_objects = [water_object1, water_object2, water_object3, water_object4]
+        self.solid_objects = solid_objects
+        self.rect = self.image.get_rect(topleft = (self.rect.x,self.rect.y))
         self.island = island
         self.num = num
-        self.player_input(landscape_objects)
-        self.rect = self.image.get_rect(topleft = (self.rect.x,self.rect.y))
+        self.player_input()
+
+    def use(self):
+        #Check what item is in hand
+        if 1==1:
+            self.chop_tree()
 
     def attack(self): 
         pass
 
-    def player_input(self, landscape_objects):
+    def chop_tree(self):
+        closest_tree = []
+        player_cx, player_cy = self.rect.centerx, self.rect.centery
+        for entity in self.solid_objects:
+            if entity.type == "tree":
+                tree_cx, tree_cy = entity.rect.centerx, entity.rect.centery
+                if not closest_tree:
+                    closest_tree = [entity, math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)]
+                else: 
+                    distance = math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)
+                    if distance < closest_tree[1]:
+                        closest_tree = [entity,distance]
+
+        if closest_tree[1] < 30:
+            closest_tree[0].chopped()
+            closest_tree = []
+            self.chop_sound.play()
+            self.last_action_time = pygame.time.get_ticks()
+
+
+
+    def player_input(self):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         keys = pygame.key.get_pressed()
@@ -43,58 +80,58 @@ class Player(pygame.sprite.Sprite):
             images = ["L.png", "LR.png", "LL.png"]
             self.image = pygame.image.load(f"characters/Player{self.style}/{images[self.num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
-                self.rect.x -= math.floor(self.speed/2 * 1.5)
-                if self.player_collision(landscape_objects):
-                    self.rect.x += math.floor(self.speed/2 * 1.5)
+                self.rect.x -= math.floor(self.speed * 1.5)
+                if self.player_collision():
+                    self.rect.x += math.floor(self.speed * 1.5)
             else:
-                self.rect.x -= math.floor(self.speed/2)
-                if self.player_collision(landscape_objects):
-                    self.rect.x += math.floor(self.speed/2)
-            if self.rect.x < self.island.x:
-                self.rect.x = self.island.x
+                self.rect.x -= math.floor(self.speed)
+                if self.player_collision():
+                    self.rect.x += math.floor(self.speed)
         
         #Move up
         if keys[pygame.K_w]:
             images = ["B.png", "BR.png", "BL.png"]
             self.image = pygame.image.load(f"characters/Player{self.style}/{images[self.num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
-                self.rect.y -= math.floor(self.speed/2 * 1.5)
-                if self.player_collision(landscape_objects):
-                    self.rect.y += math.floor(self.speed/2 * 1.5)
+                self.rect.y -= math.floor(self.speed * 1.5)
+                if self.player_collision():
+                    self.rect.y += math.floor(self.speed * 1.5)
             else:
-                self.rect.y -= math.floor(self.speed/2)
-                if self.player_collision(landscape_objects):
-                    self.rect.y += math.floor(self.speed/2)
-            if self.rect.y < self.island.y:
-                self.rect.y = self.island.y
+                self.rect.y -= math.floor(self.speed)
+                if self.player_collision():
+                    self.rect.y += math.floor(self.speed)
 
         #Move Right
         if keys[pygame.K_d]:
             images = ["R.png", "RR.png", "RL.png"]
             self.image = pygame.image.load(f"characters/Player{self.style}/{images[self.num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
-                self.rect.x += math.floor(self.speed/2 * 1.5)
-                if self.player_collision(landscape_objects):
-                    self.rect.x -= math.floor(self.speed/2 * 1.5)
+                self.rect.x += math.floor(self.speed * 1.5)
+                if self.player_collision():
+                    self.rect.x -= math.floor(self.speed * 1.5)
             else:
-                self.rect.x += math.floor(self.speed/2)
-                if self.player_collision(landscape_objects):
-                    self.rect.x -= math.floor(self.speed/2)
-            if self.rect.x + self.width > self.island.width:
-                self.rect.x = self.island.width - self.width
+                self.rect.x += math.floor(self.speed)
+                if self.player_collision():
+                    self.rect.x -= math.floor(self.speed)
         
         #Move down
         if keys[pygame.K_s]:
             images = ["F.png", "FR.png", "FL.png"]
             self.image = pygame.image.load(f"characters/Player{self.style}/{images[self.num]}").convert_alpha()
             if keys[pygame.K_LSHIFT]:
-                self.rect.y += math.floor(self.speed/2 * 1.5)
-                if self.player_collision(landscape_objects):
-                    self.rect.y -= math.floor(self.speed/2 * 1.5)
+                self.rect.y += math.floor(self.speed * 1.5)
+                if self.player_collision():
+                    self.rect.y -= math.floor(self.speed * 1.5)
             else:
-                self.rect.y += math.floor(self.speed/2)
-                if self.player_collision(landscape_objects):
-                    self.rect.y -= math.floor(self.speed/2)
-            if self.rect.y + self.height > self.island.height:
-                self.rect.y = self.island.height - self.height   
+                self.rect.y += math.floor(self.speed)
+                if self.player_collision():
+                    self.rect.y -= math.floor(self.speed) 
+        
+        if keys[pygame.K_SPACE]:
+            print(pygame.time.get_ticks() - self.last_action_time)
+            if self.last_action_time == -1:
+                self.use()
+            elif pygame.time.get_ticks() - self.last_action_time > 500:
+                self.use()
+
 
