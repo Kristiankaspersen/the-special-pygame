@@ -19,10 +19,10 @@ pygame.init()
 
 #Window and Game settings
 clock = pygame.time.Clock()
-# width = 1400
-# height = 960
-width = 1000
-height = 560
+width = 1400
+height = 960
+# width = 1000
+# height = 560
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
