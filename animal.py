@@ -1,5 +1,6 @@
 import pygame 
 import random
+import math
 
 class Animal(pygame.sprite.Sprite): 
     all = []
@@ -11,12 +12,23 @@ class Animal(pygame.sprite.Sprite):
 
         Animal.all.append(self)
     
-    def update(self, island, solid_objects, water_object1, water_object2, water_object3, water_object4, animate_num):
+    def update(self, island, solid_objects, water_object1, water_object2, water_object3, water_object4, animate_num, player):
         self.water_objects = [water_object1, water_object2, water_object3, water_object4]
         self.solid_objects = solid_objects
         self.island = island
         self.animal_movement(animate_num)
         self.isdead()
+        self.make_sound(player)
+
+    def make_sound(self, player):
+        if self.animal_name != "fish":
+            self.cx, self.cy = self.rect.centerx, self.rect.centery
+            if math.sqrt(abs(player.sprite.rect.centerx-self.rect.centerx)**2 + abs(player.sprite.rect.centerx-self.rect.centery)**2) < 40:
+                if random.randint(1, 10000) < 10:
+                    if self.animal_name == "lion":
+                        self.sound1.play()
+                        # self.agro = True   Make lion attack player
+
 
     def spawn_collision(self, solid_objects, water_object1, water_object2, water_object3, water_object4):
         water_objects = [water_object1, water_object2, water_object3, water_object4]
@@ -106,7 +118,8 @@ class Lion(Animal):
         self.animal_name = "lion"
         self.speed = 3
         self.health = 20
-        self.laziness = 100  
+        self.laziness = 100
+        self.sound1 = pygame.mixer.Sound("audio/lion1.wav") 
 
         self.x, self.y = self.on_island(island)
         self.image = pygame.image.load(f"animals/{self.animal_name}/F.png").convert_alpha()

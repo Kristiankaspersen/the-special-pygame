@@ -74,12 +74,12 @@ class Player(pygame.sprite.Sprite):
                     closest_tree[0].chopped()
                 closest_tree = []
 
-
-
     def player_input(self):
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         keys = pygame.key.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_buttons = pygame.mouse.get_pressed()
 
         #Move left
         if keys[pygame.K_a]:
@@ -139,4 +139,8 @@ class Player(pygame.sprite.Sprite):
             elif pygame.time.get_ticks() - self.last_action_time > 500:
                 self.use()
 
-
+        if mouse_buttons[0]:
+            if self.last_action_time == -1:
+                self.use()
+            elif pygame.time.get_ticks() - self.last_action_time > 500:
+                self.use()

@@ -19,10 +19,10 @@ pygame.init()
 
 #Window and Game settings
 clock = pygame.time.Clock()
-width = 1400
-height = 960
-# width = 1000
-# height = 560
+# width = 1400
+# height = 960
+width = 1000
+height = 560
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("The Baboon Island")
 
@@ -34,7 +34,7 @@ animation_counter = 0
 animation_timer = 0
 grass_amount = height
 trees_amount = 20
-lion_amount = 10
+lion_amount = 1
 fish_amount = 15
 
 def new_game():
@@ -127,7 +127,7 @@ while running:
         player.update(main_island, solid_objects, soft_objects, water_object1, water_object2, water_object3, water_object4, animation_counter)
         player.draw(screen)
 
-        animals.update(main_island, solid_objects, water_object1, water_object2, water_object3, water_object4, animation_counter)
+        animals.update(main_island, solid_objects, water_object1, water_object2, water_object3, water_object4, animation_counter, player)
         animals.draw(screen)
 
         solid_objects.update(player, animals)
