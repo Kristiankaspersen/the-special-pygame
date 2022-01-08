@@ -9,8 +9,8 @@ class Entity(pygame.sprite.Sprite):
         self.screen = screen
         self.solid = False
 
-    def update(self):
-        pass
+    def update(self, player, animal):
+        self.respawn(player, animal)
 
     def spawn_collision(self, player):
         if self.rect.colliderect(player.sprite.rect):
@@ -21,6 +21,20 @@ class Entity(pygame.sprite.Sprite):
                     if self.rect.colliderect(entity.rect):
                         self.kill()
                         break
+
+    def respawn(self, player, animals):
+        if self.type == "tree":
+            if self.ischopped and pygame.time.get_ticks() - self.chopped_timer > 10000:
+                for animal in animals:
+                    if self.original_rect.colliderect(animal.rect):
+                        pass
+                if self.original_rect.colliderect(player.sprite.rect):
+                    pass
+                else:
+                    self.image = pygame.image.load(f"entity/tree{self.tree_type}.png").convert_alpha()
+                    self.rect = self.image.get_rect(midbottom = (self.x_midbot, self.y_midbot))
+                    self.health = 5
+                    self.ischopped = False
 
     def on_island(self, island):
         x = random.randint(island.x, island.width-10)
@@ -39,22 +53,29 @@ class Tree(Entity):
     all = []
     def __init__(self, screen, island):
         super().__init__(screen, island)
-        self.type = "tree"
-        self.tree_type = random.randint(1,4)
         self.solid = True
+        self.type = "tree"
+        self.health = 5
+        self.ischopped = False
+        self.tree_type = random.randint(1,4)
 
+        self.tree_falling_sound = pygame.mixer.Sound("audio/tree_falling.wav")
+        self.tree_falling_sound.set_volume(0.3)
+        
         self.x_midbot, self.y_midbot = self.on_island(island)
         self.image = pygame.image.load(f"entity/tree{self.tree_type}.png").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (self.x_midbot, self.y_midbot))
+        self.original_rect = self.rect
 
         Entity.all.append(self)
         Tree.all.append(self)
 
-        #Used to make sure trees do not spawn on top of each other. Should be optimized.
-        # self.spawn_collision()
-
     def chopped(self):
-        print("I got chopped")
+        self.tree_falling_sound.play()
+        self.ischopped = True
+        self.chopped_timer = pygame.time.get_ticks()
+        self.image = pygame.image.load(f"entity/stub1.png").convert_alpha()
+        self.rect = self.image.get_rect(midbottom = (self.x_midbot, self.y_midbot))
 
 class Grass(Entity):
     all = []

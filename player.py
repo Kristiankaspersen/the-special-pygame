@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 class Player(pygame.sprite.Sprite): 
     all = []
@@ -17,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.hitbox = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
 
         self.last_action_time = -1
-        self.chop_sound = pygame.mixer.Sound("audio/chop1.wav")
+        self.chop_sounds = [pygame.mixer.Sound("audio/chop1.wav"), pygame.mixer.Sound("audio/chop2.wav"), pygame.mixer.Sound("audio/chop3.wav")]
 
         Player.all.append(self)
 
@@ -52,21 +53,26 @@ class Player(pygame.sprite.Sprite):
     def chop_tree(self):
         closest_tree = []
         player_cx, player_cy = self.rect.centerx, self.rect.centery
-        for entity in self.solid_objects:
-            if entity.type == "tree":
-                tree_cx, tree_cy = entity.rect.centerx, entity.rect.centery
-                if not closest_tree:
-                    closest_tree = [entity, math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)]
-                else: 
-                    distance = math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)
-                    if distance < closest_tree[1]:
-                        closest_tree = [entity,distance]
+        if self.solid_objects:
+            for entity in self.solid_objects:
+                if entity.type == "tree" and entity.ischopped == False:
+                    tree_cx, tree_cy = entity.rect.centerx, entity.rect.centery
+                    if not closest_tree:
+                        closest_tree = [entity, math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)]
+                    else: 
+                        distance = math.sqrt(abs(player_cx-tree_cx)**2 + abs(player_cy-tree_cy)**2)
+                        if distance < closest_tree[1]:
+                            closest_tree = [entity,distance]
 
-        if closest_tree[1] < 30:
-            closest_tree[0].chopped()
-            closest_tree = []
-            self.chop_sound.play()
-            self.last_action_time = pygame.time.get_ticks()
+        if closest_tree:
+            if closest_tree[1] < 30:
+                self.last_action_time = pygame.time.get_ticks()
+                random.choice(self.chop_sounds).play()
+                closest_tree[0].health -= 1     #Better axes can do more damage
+
+                if closest_tree[0].health <= 0:
+                    closest_tree[0].chopped()
+                closest_tree = []
 
 
 
@@ -128,7 +134,6 @@ class Player(pygame.sprite.Sprite):
                     self.rect.y -= math.floor(self.speed) 
         
         if keys[pygame.K_SPACE]:
-            print(pygame.time.get_ticks() - self.last_action_time)
             if self.last_action_time == -1:
                 self.use()
             elif pygame.time.get_ticks() - self.last_action_time > 500:
