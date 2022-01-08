@@ -29,7 +29,6 @@ class Animal(pygame.sprite.Sprite):
                         self.sound1.play()
                         # self.agro = True   Make lion attack player
 
-
     def spawn_collision(self, solid_objects, water_object1, water_object2, water_object3, water_object4):
         water_objects = [water_object1, water_object2, water_object3, water_object4]
         for x in solid_objects:
