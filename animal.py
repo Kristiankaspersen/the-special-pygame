@@ -23,9 +23,10 @@ class Animal(pygame.sprite.Sprite):
     def make_sound(self, player):
         if self.animal_name != "fish":
             self.cx, self.cy = self.rect.centerx, self.rect.centery
-            if math.sqrt(abs(player.sprite.rect.centerx-self.rect.centerx)**2 + abs(player.sprite.rect.centerx-self.rect.centery)**2) < 40:
-                if random.randint(1, 10000) < 10:
+            if math.sqrt(abs(player.sprite.rect.centerx-self.rect.centerx)**2 + abs(player.sprite.rect.centery-self.rect.centery)**2) < 40:
+                if random.randint(1, 10000) < 10 and (pygame.time.get_ticks() - self.sound_timer > 10000 or self.sound_timer == -1):
                     if self.animal_name == "lion":
+                        self.sound_timer = pygame.time.get_ticks()
                         self.sound1.play()
                         # self.agro = True   Make lion attack player
 
@@ -119,6 +120,7 @@ class Lion(Animal):
         self.health = 20
         self.laziness = 100
         self.sound1 = pygame.mixer.Sound("audio/lion1.wav") 
+        self.sound_timer = -1
 
         self.x, self.y = self.on_island(island)
         self.image = pygame.image.load(f"animals/{self.animal_name}/F.png").convert_alpha()
